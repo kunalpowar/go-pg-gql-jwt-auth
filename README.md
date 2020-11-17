@@ -1,0 +1,1 @@
+# Practice Project to Implement JWT Auth with Golang + Graphql + Postgres on the server and a Flutter App as a client
