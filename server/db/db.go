@@ -1,7 +1,6 @@
 package db
 
 import (
-	"context"
 	"log"
 
 	"github.com/go-pg/pg/v10"
@@ -19,13 +18,5 @@ func MustInit(opts *InitDBOpts) {
 		Database: opts.Database,
 	})
 
-	mustPing()
-
 	log.Printf("connected to DB: %v", Instance)
-}
-
-func mustPing() {
-	if err := Instance.Ping(context.Background()); err != nil {
-		log.Fatalf("db: could not ping db: %v", err)
-	}
 }
