@@ -32,8 +32,8 @@ func (o *InitDBOpts) useDefaultsIfEmpty() {
 	}
 }
 
-// Init connects to the db and initialises the global DB var.
-func Init(opts *InitDBOpts) {
+// MustInit connects to the db and initialises the global DB var.
+func MustInit(opts *InitDBOpts) {
 	opts.useDefaultsIfEmpty()
 
 	Instance = pg.Connect(&pg.Options{
