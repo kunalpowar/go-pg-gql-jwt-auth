@@ -10,20 +10,23 @@ import (
 // Instance refers to the connected db.
 var Instance *pg.DB
 
-type InitDBOpts struct {
-	User     string
-	Database string
-}
+type InitDBOpts pg.Options
 
 const (
+	defAddres   = "localhost:5432"
 	defDBUser   = "kunalpowar"
 	defDatabase = "gopggqlauth"
 )
 
 func (o *InitDBOpts) useDefaultsIfEmpty() {
+	if o.Addr == "" {
+		o.Addr = defAddres
+	}
+
 	if o.User == "" {
 		o.User = defDBUser
 	}
+
 	if o.Database == "" {
 		o.Database = defDBUser
 	}
