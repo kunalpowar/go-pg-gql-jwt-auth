@@ -23,7 +23,7 @@ func (user *User) Create() error {
 
 	model.Password = hashedPassword
 
-	if _, err := db.DB.Model(&model).Insert(); err != nil {
+	if _, err := db.Instance.Model(&model).Insert(); err != nil {
 		return fmt.Errorf("users: could not insert user %v: %v", model, err)
 	}
 
@@ -42,7 +42,7 @@ func CheckPasswordHash(password, hash string) bool {
 
 func GetUserIdByUsername(username string) (int, error) {
 	var u User
-	if err := db.DB.Model(&u).Where("username = ?", username).Select(); err != nil {
+	if err := db.Instance.Model(&u).Where("username = ?", username).Select(); err != nil {
 		return 0, fmt.Errorf("users: could not get user for username %q: %v", username, err)
 	}
 
@@ -51,7 +51,7 @@ func GetUserIdByUsername(username string) (int, error) {
 
 func (user *User) Authenticate() (bool, error) {
 	var u User
-	if err := db.DB.Model(&u).Where("username = ?", user.Username).Select(); err != nil {
+	if err := db.Instance.Model(&u).Where("username = ?", user.Username).Select(); err != nil {
 		return false, fmt.Errorf("users: could not get user for username %q: %v", user.Username, err)
 	}
 

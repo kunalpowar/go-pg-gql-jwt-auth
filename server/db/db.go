@@ -7,8 +7,8 @@ import (
 	"github.com/go-pg/pg/v10"
 )
 
-// DB refers to the connected db.
-var DB *pg.DB
+// Instance refers to the connected db.
+var Instance *pg.DB
 
 type InitDBOpts struct {
 	User     string
@@ -33,18 +33,18 @@ func (o *InitDBOpts) useDefaultsIfEmpty() {
 func Init(opts *InitDBOpts) {
 	opts.useDefaultsIfEmpty()
 
-	DB = pg.Connect(&pg.Options{
+	Instance = pg.Connect(&pg.Options{
 		User:     opts.User,
 		Database: opts.Database,
 	})
 
 	mustPing()
 
-	log.Printf("connected to DB: %v", DB)
+	log.Printf("connected to DB: %v", Instance)
 }
 
 func mustPing() {
-	if err := DB.Ping(context.Background()); err != nil {
+	if err := Instance.Ping(context.Background()); err != nil {
 		log.Fatalf("db: could not ping db: %v", err)
 	}
 }
