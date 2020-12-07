@@ -10,11 +10,32 @@ import (
 // DB refers to the connected db.
 var DB *pg.DB
 
+type InitDBOpts struct {
+	User     string
+	Database string
+}
+
+const (
+	defDBUser   = "kunalpowar"
+	defDatabase = "gopggqlauth"
+)
+
+func (o *InitDBOpts) useDefaultsIfEmpty() {
+	if o.User == "" {
+		o.User = defDBUser
+	}
+	if o.Database == "" {
+		o.Database = defDBUser
+	}
+}
+
 // Init connects to the db and initialises the global DB var.
-func Init() {
+func Init(opts *InitDBOpts) {
+	opts.useDefaultsIfEmpty()
+
 	DB = pg.Connect(&pg.Options{
-		User:     "kunalpowar",
-		Database: "gopggqlauth",
+		User:     opts.User,
+		Database: opts.Database,
 	})
 
 	mustPing()

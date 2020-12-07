@@ -18,7 +18,7 @@ import (
 const defaultPort = "8080"
 
 func main() {
-	db.Init()
+	db.Init(&db.InitDBOpts{})
 
 	router := chi.NewRouter()
 	router.Use(auth.Middleware())
