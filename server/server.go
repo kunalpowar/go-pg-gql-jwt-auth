@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -38,7 +39,7 @@ func main() {
 		log.Printf("attempting to connect to db via unit socket: %s", dbSocketName)
 
 		opts.Network = "unix"
-		opts.Addr = dbSocketName
+		opts.Addr = fmt.Sprintf("/cloudsql/%s", dbSocketName)
 	}
 
 	db.MustInit(&opts)
