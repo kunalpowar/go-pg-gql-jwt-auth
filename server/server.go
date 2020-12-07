@@ -26,6 +26,7 @@ func main() {
 
 	tcpHost := os.Getenv("DB_TCP_HOST")
 	if tcpHost != "" {
+		log.Printf("attempting to connect to db via tcp: %s", tcpHost)
 		opts.Network = "tcp"
 		opts.Addr = tcpHost
 	} else {
@@ -33,6 +34,8 @@ func main() {
 		if dbSocketName == "" {
 			log.Fatalf("at least one of DB_TCP_HOST or INSTANCE_CONNECTION_NAME should be set in env")
 		}
+
+		log.Printf("attempting to connect to db via unit socket: %s", dbSocketName)
 
 		opts.Network = "unix"
 		opts.Addr = dbSocketName
