@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log"
 	"net/http"
 	"os"
@@ -19,31 +19,8 @@ import (
 const defaultPort = "8080"
 
 func main() {
-	opts := db.InitDBOpts{
-		User:     os.Getenv("DB_USER"),
-		Password: os.Getenv("DB_PASS"),
-		Database: os.Getenv("DB_NAME"),
-	}
-
-	tcpHost := os.Getenv("DB_TCP_HOST")
-	if tcpHost != "" {
-		opts.Network = "tcp"
-		opts.Addr = tcpHost
-
-		log.Printf("attempting to connect to db via tcp: %s", opts.Addr)
-	} else {
-		dbSocketName := os.Getenv("INSTANCE_CONNECTION_NAME")
-		if dbSocketName == "" {
-			log.Fatalf("at least one of DB_TCP_HOST or INSTANCE_CONNECTION_NAME should be set in env")
-		}
-
-		opts.Network = "unix"
-		opts.Addr = fmt.Sprintf("/cloudsql/%s/.s.PGSQL.5432", dbSocketName)
-
-		log.Printf("attempting to connect to db via unit socket: %s", opts.Addr)
-	}
-
-	db.MustInit(&opts)
+	ctx := context.Background()
+	db.MustInit(ctx)
 
 	router := chi.NewRouter()
 	router.Use(auth.Middleware())
