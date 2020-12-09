@@ -60,7 +60,10 @@ func MustInit(ctx context.Context) {
 		log.Fatalf("db: could not create migration: %v", err)
 	}
 
-	if err := migration.Up(); err != nil {
+	if err := migration.Up(); err != nil && err != migrate.ErrNoChange {
 		log.Fatalf("db: could not run migration: %v", err)
+	} else {
+		log.Printf("db: migrations completed: %v", err)
 	}
+
 }
