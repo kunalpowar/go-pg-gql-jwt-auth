@@ -8,23 +8,22 @@ import (
 )
 
 type User struct {
-	ID       int    `json:"id" pg:"id"`
-	Username string `json:"name" pg:"username"`
-	Password string `json:"password" pg:"password"`
+	ID       int    `json:"id" db:"id"`
+	Username string `json:"name" db:"username"`
+	Password string `json:"password" db:"password"`
 }
 
 func (user *User) Create() error {
-	model := User{Username: user.Username}
+	u := User{Username: user.Username}
 
 	hashedPassword, err := HashPassword(user.Password)
 	if err != nil {
 		return fmt.Errorf("users: could not hash password: %v", err)
 	}
+	u.Password = hashedPassword
 
-	model.Password = hashedPassword
-
-	if _, err := db.Instance.Model(&model).Insert(); err != nil {
-		return fmt.Errorf("users: could not insert user %v: %v", model, err)
+	if _, err := db.Instance.Exec("INSERT INTO users (username, password) VALUES ($1, $2)", u.Username, u.Password); err != nil {
+		return fmt.Errorf("users: could not insert user %v: %v", u, err)
 	}
 
 	return nil
@@ -42,7 +41,7 @@ func CheckPasswordHash(password, hash string) bool {
 
 func GetUserIdByUsername(username string) (int, error) {
 	var u User
-	if err := db.Instance.Model(&u).Where("username = ?", username).Select(); err != nil {
+	if err := db.Instance.Get(&u, "SELECT * FROM users WHERE username=$1", username); err != nil {
 		return 0, fmt.Errorf("users: could not get user for username %q: %v", username, err)
 	}
 
@@ -51,7 +50,7 @@ func GetUserIdByUsername(username string) (int, error) {
 
 func (user *User) Authenticate() (bool, error) {
 	var u User
-	if err := db.Instance.Model(&u).Where("username = ?", user.Username).Select(); err != nil {
+	if err := db.Instance.Get(&u, "SELECT * FROM users WHERE username=$1", user.Username); err != nil {
 		return false, fmt.Errorf("users: could not get user for username %q: %v", user.Username, err)
 	}
 
