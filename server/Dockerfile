@@ -30,5 +30,7 @@ RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -
 COPY --from=builder /app/server /app/server
 COPY --from=builder /app/db/migrations/ /app/db/migrations/
 
+WORKDIR /app
+
 # Run the web service on container startup.
-CMD ["/app/server"]
+CMD ["./server"]
