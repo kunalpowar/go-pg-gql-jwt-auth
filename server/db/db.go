@@ -32,7 +32,7 @@ func MustInit(ctx context.Context) {
 		connectionString = fmt.Sprintf("host=%s port=%s %s", tcpHost, tcpPort, connectionString)
 		log.Printf("db: attempting to connect to db via tcp: %q", connectionString)
 	} else if dbSocketName != "" {
-		connectionString = fmt.Sprintf("host=/cloudsql port=%s %s user=%s password=%s", fmt.Sprintf("%s/.s.PGSQL.5432", dbSocketName), connectionString, user, password)
+		connectionString = fmt.Sprintf("host=/cloudsql/%s/.s.PGSQL.5432 %s user=%s password=%s", dbSocketName, connectionString, user, password)
 		log.Printf("db: attempting to connect to db via unit socket: %q", connectionString)
 	} else {
 		log.Fatalf("db: at least one of DB_TCP_HOST or INSTANCE_CONNECTION_NAME should be set in env")
