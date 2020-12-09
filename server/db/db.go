@@ -6,10 +6,14 @@ import (
 	"log"
 	"os"
 
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/jmoiron/sqlx"
 
 	// Postgres driver
 	_ "github.com/jackc/pgx/stdlib"
+	// For migrations with file
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 // Instance refers to the connected db.
@@ -45,4 +49,18 @@ func MustInit(ctx context.Context) {
 	}
 
 	log.Printf("db: connection established: %v", Instance)
+
+	driver, err := postgres.WithInstance(Instance.DB, &postgres.Config{})
+	if err != nil {
+		log.Fatalf("db: could not create driver: %v", err)
+	}
+
+	migration, err := migrate.NewWithDatabaseInstance("file://db/migrations", database, driver)
+	if err != nil {
+		log.Fatalf("db: could not create migration: %v", err)
+	}
+
+	if err := migration.Up(); err != nil {
+		log.Fatalf("db: could not run migration: %v", err)
+	}
 }
